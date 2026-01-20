@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/medications")
 public class MedicationController {
@@ -20,6 +25,20 @@ public class MedicationController {
     @GetMapping("/{id}")
     public ResponseEntity<Medication> getMedicationById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(medicationUseCase.getMedicationById(id));
+    }
+    @PostMapping
+    public HttpStatus postNewMedication(@RequestBody Medication medication){
+        try{
+            medicationUseCase.createMedication(medication);
+            return  HttpStatus.CREATED;
+        }catch (Exception e){
+            return HttpStatus.BAD_REQUEST;
+        }
+    }
+
+    @GetMapping("/category/{category}?expiration-after={date}")
+    public ResponseEntity<List<Medication>> getByCategoryANDdate(@PathVariable Category category, @PathVariable LocalDate date){
+        return  ResponseEntity.status(HttpStatus.OK).body(medicationUseCase.getByCategoryANDdate(category.getId(), date));
     }
 
 }
